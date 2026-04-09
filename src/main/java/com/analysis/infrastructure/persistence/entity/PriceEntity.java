@@ -30,8 +30,8 @@ public class PriceEntity {
     @JoinColumn(name = "stock_id", nullable = false)
     private StockEntity stock;
 
-    @Column(name = "date", columnDefinition = "TIMESTAMP WITH TIME ZONE", nullable = false)
-    private OffsetDateTime date;
+    @Column(name = "snapshot_at", columnDefinition = "TIMESTAMP WITH TIME ZONE", nullable = false)
+    private OffsetDateTime snapshotAt;
 
     @Column(name = "close_price", nullable = false)
     private BigDecimal closePrice;
@@ -39,9 +39,9 @@ public class PriceEntity {
     @Column(nullable = false)
     private Long volume;
 
-    public PriceEntity(StockEntity stock, OffsetDateTime date, BigDecimal closePrice, Long volume) {
+    public PriceEntity(StockEntity stock, OffsetDateTime snapshotAt, BigDecimal closePrice, Long volume) {
         this.stock = stock;
-        this.date = date;
+        this.snapshotAt = snapshotAt;
         this.closePrice = closePrice;
         this.volume = volume;
     }

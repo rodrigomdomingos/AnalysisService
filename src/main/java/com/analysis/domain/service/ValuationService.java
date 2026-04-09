@@ -1,5 +1,6 @@
 package com.analysis.domain.service;
 
+import com.analysis.application.context.AnalysisContext;
 import com.analysis.domain.model.RawFundamentals;
 import com.analysis.domain.model.ValuationSnapshot;
 import com.analysis.domain.repository.ValuationRepository;
@@ -7,41 +8,39 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Clock;
-import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @Service
 public class ValuationService {
 
     private final ValuationRepository valuationRepository;
-    private final Clock clock;
 
-    public ValuationService(ValuationRepository valuationRepository, Clock clock) {
+    public ValuationService(ValuationRepository valuationRepository) {
         this.valuationRepository = valuationRepository;
-        this.clock = clock;
     }
 
-    public ValuationSnapshot process(RawFundamentals raw) {
-        Optional<ValuationSnapshot> existingSnapshot = valuationRepository.findByStockIdAndSnapshotDate(raw.getStockId(), raw.getReferenceDate());
+    public ValuationSnapshot process(RawFundamentals raw, AnalysisContext context) {
+        if (context.getSnapshotAt() == null) {
+            throw new IllegalStateException("snapshotAt must not be null");
+        }
+        Optional<ValuationSnapshot> existingSnapshot = valuationRepository.findByStockIdAndSnapshotAt(context.getStockId(), context.getSnapshotAt());
         if (existingSnapshot.isPresent()) {
             return existingSnapshot.get();
         }
 
-        ValuationSnapshot snapshot = compute(raw);
-        valuationRepository.save(snapshot);
-        return snapshot;
+        ValuationSnapshot computed = compute(raw, context);
+        valuationRepository.save(computed);
+        return computed;
     }
 
-    public ValuationSnapshot compute(RawFundamentals raw) {
+    public ValuationSnapshot compute(RawFundamentals raw, AnalysisContext context) {
         BigDecimal fcfYield = calculateFcfYield(raw.getFreeCashFlow(), raw.getMarketCap());
         BigDecimal peg = calculatePeg(raw.getPegRatio(), raw.getPe(), raw.getEarningsGrowth());
         BigDecimal evEbitda = null;
 
         return new ValuationSnapshot(
-                raw.getStockId(),
-                OffsetDateTime.now(clock),
-                raw.getReferenceDate(),
+                context.getStockId(),
+                context.getSnapshotAt(),
                 raw.getPe(),
                 evEbitda,
                 peg,
@@ -60,11 +59,11 @@ public class ValuationService {
         if (pegRatio != null) {
             return pegRatio;
         }
-        
+
         if (earningsGrowth != null && earningsGrowth.compareTo(BigDecimal.ZERO) > 0 && pe != null) {
             return safeDivide(pe, earningsGrowth);
         }
-        
+
         return null;
     }
 

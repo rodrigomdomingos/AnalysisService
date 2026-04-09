@@ -6,7 +6,7 @@ import com.analysis.infrastructure.persistence.entity.StockEntity;
 import com.analysis.infrastructure.persistence.mapper.ValuationMapper;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @Repository
@@ -21,7 +21,7 @@ public class ValuationRepositoryAdapter implements ValuationRepository {
 
     @Override
     public Optional<ValuationSnapshot> findLatestByStockId(Long stockId) {
-        return delegate.findFirstByStockIdOrderByDateDesc(stockId)
+        return delegate.findFirstByStockIdOrderBySnapshotAtDesc(stockId)
                 .map(ValuationMapper::toDomain);
     }
     
@@ -33,8 +33,8 @@ public class ValuationRepositoryAdapter implements ValuationRepository {
     }
 
     @Override
-    public Optional<ValuationSnapshot> findByStockIdAndSnapshotDate(Long stockId, LocalDate snapshotDate) {
-        return delegate.findByStockIdAndSnapshotDate(stockId, snapshotDate)
+    public Optional<ValuationSnapshot> findByStockIdAndSnapshotAt(Long stockId, OffsetDateTime snapshotAt) {
+        return delegate.findByStockIdAndSnapshotAt(stockId, snapshotAt)
                 .map(ValuationMapper::toDomain);
     }
 }

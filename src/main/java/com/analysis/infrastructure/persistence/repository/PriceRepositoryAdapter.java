@@ -17,8 +17,8 @@ public class PriceRepositoryAdapter implements PriceRepository {
     }
 
     @Override
-    public List<Price> findByStockIdOrderByDateAsc(Long stockId) {
-        return delegate.findByStockIdOrderByDateAsc(stockId).stream()
+    public List<Price> findByStockIdOrderBySnapshotAtAsc(Long stockId) {
+        return delegate.findByStockIdOrderBySnapshotAtAsc(stockId).stream()
                 .map(PriceMapper::toDomain)
                 .collect(Collectors.toList());
     }

@@ -1,18 +1,18 @@
 package com.analysis.domain.service;
 
+import com.analysis.application.dto.FundamentalSignals;
+import com.analysis.application.dto.TechnicalSignals;
+import com.analysis.application.dto.ValuationSignals;
 import com.analysis.domain.model.FundamentalsSnapshot;
 import com.analysis.domain.model.TechnicalSnapshot;
 import com.analysis.domain.model.ValuationSnapshot;
-import com.analysis.domain.model.signal.FundamentalSignals;
 import com.analysis.domain.model.signal.GrowthValuationLevel;
 import com.analysis.domain.model.signal.MomentumSignal;
 import com.analysis.domain.model.signal.RiskLevel;
 import com.analysis.domain.model.signal.RsiSignal;
 import com.analysis.domain.model.signal.StrengthLevel;
-import com.analysis.domain.model.signal.TechnicalSignals;
 import com.analysis.domain.model.signal.TrendSignal;
 import com.analysis.domain.model.signal.ValuationLevel;
-import com.analysis.domain.model.signal.ValuationSignals;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

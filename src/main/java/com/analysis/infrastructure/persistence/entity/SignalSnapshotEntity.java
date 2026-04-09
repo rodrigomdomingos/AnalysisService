@@ -15,18 +15,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "price_snapshot", schema = "investments",
+@Table(name = "signal_snapshot", schema = "investments",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uq_price_snapshot", columnNames = {"stock_id", "snapshot_at"})
+                @UniqueConstraint(name = "uq_signal_snapshot", columnNames = {"stock_id", "snapshot_at"})
         })
-public class PriceSnapshotEntity {
+public class SignalSnapshotEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,33 +37,41 @@ public class PriceSnapshotEntity {
     @Column(name = "snapshot_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime snapshotAt;
 
-    @Column(name = "close_price")
-    private BigDecimal closePrice;
+    @Column(name = "pe_signal", columnDefinition = "TEXT")
+    private String peSignal;
+
+    @Column(name = "peg_signal", columnDefinition = "TEXT")
+    private String pegSignal;
+
+    @Column(name = "fcf_yield_signal", columnDefinition = "TEXT")
+    private String fcfYieldSignal;
+
+    @Column(name = "roe_signal", columnDefinition = "TEXT")
+    private String roeSignal;
+
+    @Column(name = "debt_signal", columnDefinition = "TEXT")
+    private String debtSignal;
+
+    @Column(name = "net_margin_signal", columnDefinition = "TEXT")
+    private String netMarginSignal;
 
     @Column
-    private Long volume;
-
-    @Column
-    private BigDecimal rsi;
-
-    @Column
-    private BigDecimal ma50;
-
-    @Column
-    private BigDecimal ma200;
+    private Integer score;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime createdAt;
 
-    public PriceSnapshotEntity(StockEntity stock, OffsetDateTime snapshotAt, BigDecimal closePrice, Long volume, BigDecimal rsi, BigDecimal ma50, BigDecimal ma200, OffsetDateTime createdAt) {
+    public SignalSnapshotEntity(StockEntity stock, OffsetDateTime snapshotAt, String peSignal, String pegSignal, String fcfYieldSignal, String roeSignal, String debtSignal, String netMarginSignal, Integer score, OffsetDateTime createdAt) {
         this.stock = stock;
         this.snapshotAt = snapshotAt;
-        this.closePrice = closePrice;
-        this.volume = volume;
-        this.rsi = rsi;
-        this.ma50 = ma50;
-        this.ma200 = ma200;
+        this.peSignal = peSignal;
+        this.pegSignal = pegSignal;
+        this.fcfYieldSignal = fcfYieldSignal;
+        this.roeSignal = roeSignal;
+        this.debtSignal = debtSignal;
+        this.netMarginSignal = netMarginSignal;
+        this.score = score;
         this.createdAt = createdAt;
     }
 }

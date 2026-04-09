@@ -1,44 +1,35 @@
 package com.analysis.domain.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 public class FundamentalsSnapshot {
     private final Long stockId;
-    private final LocalDate periodDate;
-    private final OffsetDateTime date;
+    private final OffsetDateTime snapshotAt;
     private final BigDecimal revenueGrowth;
     private final BigDecimal netMargin;
     private final BigDecimal roe;
     private final BigDecimal roic;
     private final BigDecimal debtEquity;
     private final BigDecimal freeCashFlow;
-    private final BigDecimal pegRatio;
 
-    public FundamentalsSnapshot(Long stockId, LocalDate periodDate, OffsetDateTime date, BigDecimal revenueGrowth, BigDecimal netMargin, BigDecimal roe, BigDecimal roic, BigDecimal debtEquity, BigDecimal freeCashFlow, BigDecimal pegRatio) {
+    public FundamentalsSnapshot(Long stockId, OffsetDateTime snapshotAt, BigDecimal revenueGrowth, BigDecimal netMargin, BigDecimal roe, BigDecimal roic, BigDecimal debtEquity, BigDecimal freeCashFlow) {
         this.stockId = stockId;
-        this.periodDate = periodDate;
-        this.date = date;
+        this.snapshotAt = snapshotAt;
         this.revenueGrowth = revenueGrowth;
         this.netMargin = netMargin;
         this.roe = roe;
         this.roic = roic;
         this.debtEquity = debtEquity;
         this.freeCashFlow = freeCashFlow;
-        this.pegRatio = pegRatio;
     }
 
     public Long getStockId() {
         return stockId;
     }
 
-    public LocalDate getPeriodDate() {
-        return periodDate;
-    }
-
-    public OffsetDateTime getDate() {
-        return date;
+    public OffsetDateTime getSnapshotAt() {
+        return snapshotAt;
     }
 
     public BigDecimal getRevenueGrowth() {
@@ -63,9 +54,5 @@ public class FundamentalsSnapshot {
 
     public BigDecimal getFreeCashFlow() {
         return freeCashFlow;
-    }
-
-    public BigDecimal getPegRatio() {
-        return pegRatio;
     }
 }

@@ -2,10 +2,11 @@ package com.analysis.domain.model;
 
 import java.time.LocalDate;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 
 public class RawFundamentals {
     private Long stockId;
-    private LocalDate referenceDate;
+    private OffsetDateTime referenceDate;
     private BigDecimal revenue;
     private BigDecimal netIncome;
     private BigDecimal debt;
@@ -20,7 +21,7 @@ public class RawFundamentals {
     private BigDecimal pe;
     private BigDecimal earningsGrowth;
 
-    public RawFundamentals(Long stockId, LocalDate referenceDate, BigDecimal revenue, BigDecimal netIncome, BigDecimal debt, BigDecimal equity, BigDecimal freeCashFlow, BigDecimal revenueGrowth, BigDecimal roe, BigDecimal roa, BigDecimal profitMargin, BigDecimal pegRatio, BigDecimal marketCap, BigDecimal pe, BigDecimal earningsGrowth) {
+    public RawFundamentals(Long stockId, OffsetDateTime referenceDate, BigDecimal revenue, BigDecimal netIncome, BigDecimal debt, BigDecimal equity, BigDecimal freeCashFlow, BigDecimal revenueGrowth, BigDecimal roe, BigDecimal roa, BigDecimal profitMargin, BigDecimal pegRatio, BigDecimal marketCap, BigDecimal pe, BigDecimal earningsGrowth) {
         this.stockId = stockId;
         this.referenceDate = referenceDate;
         this.revenue = revenue;
@@ -42,7 +43,7 @@ public class RawFundamentals {
         return stockId;
     }
 
-    public LocalDate getReferenceDate() {
+    public OffsetDateTime getReferenceDate() {
         return referenceDate;
     }
 

@@ -6,7 +6,7 @@ import com.analysis.infrastructure.persistence.entity.StockEntity;
 import com.analysis.infrastructure.persistence.mapper.FundamentalsMapper;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @Repository
@@ -22,7 +22,7 @@ public class FundamentalsRepositoryAdapter implements FundamentalsRepository {
 
     @Override
     public Optional<FundamentalsSnapshot> findLatestByStockId(Long stockId) {
-        return delegate.findFirstByStockIdOrderByDateDesc(stockId)
+        return delegate.findFirstByStockIdOrderBySnapshotAtDesc(stockId)
                 .map(FundamentalsMapper::toDomain);
     }
 
@@ -34,8 +34,8 @@ public class FundamentalsRepositoryAdapter implements FundamentalsRepository {
     }
 
     @Override
-    public Optional<FundamentalsSnapshot> findByStockIdAndPeriodDate(Long stockId, LocalDate referenceDate) {
-        return delegate.findByStockIdAndPeriodDate(stockId, referenceDate)
+    public Optional<FundamentalsSnapshot> findByStockIdAndSnapshotAt(Long stockId, OffsetDateTime snapshotAt) {
+        return delegate.findByStockIdAndSnapshotAt(stockId, snapshotAt)
                 .map(FundamentalsMapper::toDomain);
     }
 }

@@ -14,15 +14,13 @@ public final class FundamentalsMapper {
         }
         return new FundamentalsSnapshot(
                 entity.getStock().getId(),
-                entity.getPeriodDate(),
-                entity.getDate(),
+                entity.getSnapshotAt(),
                 entity.getRevenueGrowth(),
                 entity.getNetMargin(),
                 entity.getRoe(),
                 entity.getRoic(),
                 entity.getDebtEquity(),
-                entity.getFreeCashFlow(),
-                entity.getPegRatio()
+                entity.getFreeCashFlow()
         );
     }
 
@@ -32,15 +30,14 @@ public final class FundamentalsMapper {
         }
         return new FundamentalsSnapshotEntity(
                 stock,
-                snapshot.getPeriodDate(),
-                snapshot.getDate(),
+                snapshot.getSnapshotAt(),
                 snapshot.getRevenueGrowth(),
                 snapshot.getNetMargin(),
                 snapshot.getRoe(),
                 snapshot.getRoic(),
                 snapshot.getDebtEquity(),
                 snapshot.getFreeCashFlow(),
-                snapshot.getPegRatio()
+                null
         );
     }
 }

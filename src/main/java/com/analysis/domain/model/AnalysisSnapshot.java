@@ -5,7 +5,7 @@ import java.time.OffsetDateTime;
 
 public class AnalysisSnapshot {
     private final Long stockId;
-    private final OffsetDateTime date;
+    private final OffsetDateTime snapshotAt;
     private final BigDecimal rsi;
     private final BigDecimal ma50;
     private final BigDecimal ma200;
@@ -20,9 +20,9 @@ public class AnalysisSnapshot {
     private final BigDecimal debtEquity;
     private final BigDecimal freeCashFlow;
 
-    public AnalysisSnapshot(Long stockId, OffsetDateTime date, BigDecimal rsi, BigDecimal ma50, BigDecimal ma200, BigDecimal pe, BigDecimal evEbitda, BigDecimal peg, BigDecimal fcfYield, BigDecimal revenueGrowth, BigDecimal netMargin, BigDecimal roe, BigDecimal roic, BigDecimal debtEquity, BigDecimal freeCashFlow) {
+    public AnalysisSnapshot(Long stockId, OffsetDateTime snapshotAt, BigDecimal rsi, BigDecimal ma50, BigDecimal ma200, BigDecimal pe, BigDecimal evEbitda, BigDecimal peg, BigDecimal fcfYield, BigDecimal revenueGrowth, BigDecimal netMargin, BigDecimal roe, BigDecimal roic, BigDecimal debtEquity, BigDecimal freeCashFlow) {
         this.stockId = stockId;
-        this.date = date;
+        this.snapshotAt = snapshotAt;
         this.rsi = rsi;
         this.ma50 = ma50;
         this.ma200 = ma200;
@@ -42,8 +42,8 @@ public class AnalysisSnapshot {
         return stockId;
     }
 
-    public OffsetDateTime getDate() {
-        return date;
+    public OffsetDateTime getSnapshotAt() {
+        return snapshotAt;
     }
 
     public BigDecimal getRsi() {

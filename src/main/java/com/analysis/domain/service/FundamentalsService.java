@@ -1,5 +1,6 @@
 package com.analysis.domain.service;
 
+import com.analysis.application.context.AnalysisContext;
 import com.analysis.domain.model.FundamentalsSnapshot;
 import com.analysis.domain.model.RawFundamentals;
 import com.analysis.domain.repository.FundamentalsRepository;
@@ -10,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Clock;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,31 +20,28 @@ public class FundamentalsService {
 
     private final FundamentalsRepository fundamentalsRepository;
     private final RawFundamentalsRepository rawFundamentalsRepository;
-    private final Clock clock;
 
     public FundamentalsService(FundamentalsRepository fundamentalsRepository,
-                               RawFundamentalsRepository rawFundamentalsRepository,
-                               Clock clock) {
+                               RawFundamentalsRepository rawFundamentalsRepository) {
         this.fundamentalsRepository = fundamentalsRepository;
         this.rawFundamentalsRepository = rawFundamentalsRepository;
-        this.clock = clock;
     }
 
-    public Optional<FundamentalsSnapshot> compute(Long stockId, String ticker) {
-        log.info("Computing fundamentals for stockId={} ticker={}", stockId, ticker);
-        List<RawFundamentals> rawFundamentals = rawFundamentalsRepository.findByStockIdOrderByReferenceDateDesc(stockId);
+    public Optional<FundamentalsSnapshot> compute(String ticker, AnalysisContext context) {
+        log.info("Computing fundamentals for stockId={} ticker={}", context.getStockId(), ticker);
+        List<RawFundamentals> rawFundamentals = rawFundamentalsRepository.findLatestByStockIdAndDate(context.getStockId(), context.getSnapshotAt());
 
         if (rawFundamentals.isEmpty()) {
-            log.warn("No raw fundamentals found for stockId={}", stockId);
+            log.warn("No raw fundamentals found for stockId={}", context.getStockId());
             return Optional.empty();
         }
 
         RawFundamentals latest = rawFundamentals.get(0);
         RawFundamentals previous = rawFundamentals.size() > 1 ? rawFundamentals.get(1) : null;
 
-        Optional<FundamentalsSnapshot> existingSnapshot = fundamentalsRepository.findByStockIdAndPeriodDate(stockId, latest.getReferenceDate());
+        Optional<FundamentalsSnapshot> existingSnapshot = fundamentalsRepository.findByStockIdAndSnapshotAt(context.getStockId(), context.getSnapshotAt());
         if (existingSnapshot.isPresent()) {
-            log.info("Returning existing snapshot for stockId={} and date={}", stockId, latest.getReferenceDate());
+            log.info("Returning existing snapshot for stockId={} and date={}", context.getStockId(), context.getSnapshotAt());
             return existingSnapshot;
         }
 
@@ -64,25 +60,22 @@ public class FundamentalsService {
         BigDecimal roic = calculateRoic(latest.getNetIncome(), latest.getDebt(), latest.getEquity());
         BigDecimal debtEquity = calculateDebtToEquity(latest.getDebt(), latest.getEquity());
         BigDecimal freeCashFlow = toZero(latest.getFreeCashFlow());
-        BigDecimal pegRatio = latest.getPegRatio();
 
-        FundamentalsSnapshot snapshot = new FundamentalsSnapshot(
-                stockId,
-                latest.getReferenceDate(),
-                OffsetDateTime.now(clock),
+        FundamentalsSnapshot computedSnapshot = new FundamentalsSnapshot(
+                context.getStockId(),
+                context.getSnapshotAt(),
                 toZero(revenueGrowth),
                 toZero(netMargin),
                 toZero(roe),
                 toZero(roic),
                 toZero(debtEquity),
-                freeCashFlow,
-                pegRatio
+                freeCashFlow
         );
 
-        fundamentalsRepository.save(snapshot);
-        log.info("Saved new fundamentals snapshot for stockId={}", stockId);
+        fundamentalsRepository.save(computedSnapshot);
+        log.info("Saved new fundamentals snapshot for stockId={}", context.getStockId());
 
-        return Optional.of(snapshot);
+        return Optional.of(computedSnapshot);
     }
 
     private BigDecimal calculateNetMargin(BigDecimal netIncome, BigDecimal revenue) {

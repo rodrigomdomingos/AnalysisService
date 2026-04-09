@@ -11,18 +11,20 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "valuation_snapshot", schema = "investments",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uq_valuation_snapshot", columnNames = {"stock_id", "snapshot_date"})
+                @UniqueConstraint(name = "uq_valuation_snapshot", columnNames = {"stock_id", "snapshot_at"})
         })
 public class ValuationSnapshotEntity {
     @Id
@@ -33,94 +35,32 @@ public class ValuationSnapshotEntity {
     @JoinColumn(name = "stock_id", nullable = false)
     private StockEntity stock;
 
-    @Column(name = "date", columnDefinition = "TIMESTAMP WITH TIME ZONE", nullable = false)
-    private OffsetDateTime date;
+    @Column(name = "snapshot_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private OffsetDateTime snapshotAt;
 
-    @Column(name = "snapshot_date", nullable = false)
-    private LocalDate snapshotDate;
-
-    @Column
-    private BigDecimal pe;
+    @Column(name = "pe_ratio")
+    private BigDecimal peRatio;
 
     @Column(name = "ev_ebitda")
     private BigDecimal evEbitda;
 
-    @Column
-    private BigDecimal peg;
+    @Column(name = "peg_ratio")
+    private BigDecimal pegRatio;
 
     @Column(name = "fcf_yield")
     private BigDecimal fcfYield;
 
-    protected ValuationSnapshotEntity() {
-    }
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private OffsetDateTime createdAt;
 
-    public ValuationSnapshotEntity(StockEntity stock, OffsetDateTime date, LocalDate snapshotDate, BigDecimal pe, BigDecimal evEbitda, BigDecimal peg, BigDecimal fcfYield) {
+    public ValuationSnapshotEntity(StockEntity stock, OffsetDateTime snapshotAt, BigDecimal peRatio, BigDecimal evEbitda, BigDecimal pegRatio, BigDecimal fcfYield, OffsetDateTime createdAt) {
         this.stock = stock;
-        this.date = date;
-        this.snapshotDate = snapshotDate;
-        this.pe = pe;
+        this.snapshotAt = snapshotAt;
+        this.peRatio = peRatio;
         this.evEbitda = evEbitda;
-        this.peg = peg;
+        this.pegRatio = pegRatio;
         this.fcfYield = fcfYield;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public StockEntity getStock() {
-        return stock;
-    }
-
-    public void setStock(StockEntity stock) {
-        this.stock = stock;
-    }
-
-    public OffsetDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(OffsetDateTime date) {
-        this.date = date;
-    }
-
-    public LocalDate getSnapshotDate() {
-        return snapshotDate;
-    }
-
-    public void setSnapshotDate(LocalDate snapshotDate) {
-        this.snapshotDate = snapshotDate;
-    }
-
-    public BigDecimal getPe() {
-        return pe;
-    }
-
-    public void setPe(BigDecimal pe) {
-        this.pe = pe;
-    }
-
-    public BigDecimal getEvEbitda() {
-        return evEbitda;
-    }
-
-    public void setEvEbitda(BigDecimal evEbitda) {
-        this.evEbitda = evEbitda;
-    }
-
-    public BigDecimal getPeg() {
-        return peg;
-    }
-
-    public void setPeg(BigDecimal peg) {
-        this.peg = peg;
-    }
-
-    public BigDecimal getFcfYield() {
-        return fcfYield;
-    }
-
-    public void setFcfYield(BigDecimal fcfYield) {
-        this.fcfYield = fcfYield;
+        this.createdAt = createdAt;
     }
 }

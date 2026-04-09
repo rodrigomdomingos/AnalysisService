@@ -14,7 +14,7 @@ public final class PriceMapper {
         return new Price(
                 entity.getId(),
                 entity.getStock().getId(),
-                entity.getDate(),
+                entity.getSnapshotAt(),
                 entity.getClosePrice(),
                 entity.getVolume()
         );

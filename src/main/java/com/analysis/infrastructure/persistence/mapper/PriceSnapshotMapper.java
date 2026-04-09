@@ -14,8 +14,7 @@ public final class PriceSnapshotMapper {
         }
         return new PriceSnapshot(
                 entity.getStock().getId(),
-                entity.getDate(),
-                entity.getSnapshotDate(),
+                entity.getSnapshotAt(),
                 entity.getClosePrice(),
                 entity.getVolume(),
                 entity.getRsi(),
@@ -30,14 +29,13 @@ public final class PriceSnapshotMapper {
         }
         return new PriceSnapshotEntity(
                 stock,
-                snapshot.getDate(),
-                snapshot.getSnapshotDate(),
+                snapshot.getSnapshotAt(),
                 snapshot.getClosePrice(),
                 snapshot.getVolume(),
                 snapshot.getRsi(),
                 snapshot.getMa50(),
                 snapshot.getMa200(),
-                snapshot.isAboveMa200()
+                null
         );
     }
 }
