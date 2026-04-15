@@ -88,7 +88,7 @@ public class ComputeAnalysisUseCaseImpl implements ComputeAnalysisUseCase {
         log.info("Starting analysis for ticker {}", ticker);
         
         Stock stock = findStock(ticker);
-        final AnalysisContext context = new AnalysisContext(stock.getId(), timeService.getUtcNow());
+        final AnalysisContext context = new AnalysisContext(stock.getId(), timeService.getStartOfDay());
 
         List<Price> prices = loadPrices(context.getStockId());
         TechnicalSnapshot technicalSnapshot = computeTechnical(prices);
@@ -106,8 +106,8 @@ public class ComputeAnalysisUseCaseImpl implements ComputeAnalysisUseCase {
         SignalSnapshotEntity signalSnapshot = buildSignalSnapshot(context, valuationSignals, fundamentalSignals);
         signalSnapshotRepository.save(signalSnapshot);
 
-        fundamentalsSnapshotRepository.save(toFundamentalsEntity(fundamentalsSnapshot, stock));
-        valuationSnapshotRepository.save(toValuationEntity(valuationSnapshot, stock));
+        fundamentalsSnapshotRepository.save(buildFundamentalsSnapshotEntity(context, fundamentalsSnapshot));
+        valuationSnapshotRepository.save(buildValuationSnapshotEntity(context, valuationSnapshot));
 
         AnalysisSnapshot analysisSnapshot = buildAnalysisSnapshot(context, technicalSnapshot, fundamentalsSnapshot, valuationSnapshot);
 
@@ -116,8 +116,7 @@ public class ComputeAnalysisUseCaseImpl implements ComputeAnalysisUseCase {
     }
     
     private SignalSnapshotEntity buildSignalSnapshot(AnalysisContext context, ValuationSignals valuationSignals, FundamentalSignals fundamentalSignals) {
-        StockEntity stockEntity = springDataStockRepository.findById(context.getStockId())
-            .orElseThrow(() -> new RuntimeException("StockEntity not found"));
+        StockEntity stockEntity = getStockEntity(context.getStockId());
             
         SignalSnapshotEntity entity = signalSnapshotRepository.findByStockIdAndSnapshotAt(context.getStockId(), context.getSnapshotAt())
             .orElse(new SignalSnapshotEntity());
@@ -224,10 +223,10 @@ public class ComputeAnalysisUseCaseImpl implements ComputeAnalysisUseCase {
         );
     }
 
-    private FundamentalsSnapshotEntity toFundamentalsEntity(FundamentalsSnapshot snapshot, Stock stock) {
-        StockEntity stockEntity = springDataStockRepository.findById(stock.getId())
-                .orElseThrow(() -> new RuntimeException("StockEntity not found"));
-        FundamentalsSnapshotEntity entity = new FundamentalsSnapshotEntity();
+    private FundamentalsSnapshotEntity buildFundamentalsSnapshotEntity(AnalysisContext context, FundamentalsSnapshot snapshot) {
+        StockEntity stockEntity = getStockEntity(context.getStockId());
+        FundamentalsSnapshotEntity entity = fundamentalsSnapshotRepository.findByStockIdAndSnapshotAt(context.getStockId(), context.getSnapshotAt())
+                .orElse(new FundamentalsSnapshotEntity());
         entity.setStock(stockEntity);
         entity.setSnapshotAt(snapshot.getSnapshotAt());
         entity.setRevenueGrowth(snapshot.getRevenueGrowth());
@@ -239,10 +238,10 @@ public class ComputeAnalysisUseCaseImpl implements ComputeAnalysisUseCase {
         return entity;
     }
 
-    private ValuationSnapshotEntity toValuationEntity(ValuationSnapshot snapshot, Stock stock) {
-        StockEntity stockEntity = springDataStockRepository.findById(stock.getId())
-                .orElseThrow(() -> new RuntimeException("StockEntity not found"));
-        ValuationSnapshotEntity entity = new ValuationSnapshotEntity();
+    private ValuationSnapshotEntity buildValuationSnapshotEntity(AnalysisContext context, ValuationSnapshot snapshot) {
+        StockEntity stockEntity = getStockEntity(context.getStockId());
+        ValuationSnapshotEntity entity = valuationSnapshotRepository.findByStockIdAndSnapshotAt(context.getStockId(), context.getSnapshotAt())
+                .orElse(new ValuationSnapshotEntity());
         entity.setStock(stockEntity);
         entity.setSnapshotAt(snapshot.getSnapshotAt());
         entity.setPeRatio(snapshot.getPe());
@@ -250,5 +249,10 @@ public class ComputeAnalysisUseCaseImpl implements ComputeAnalysisUseCase {
         entity.setPegRatio(snapshot.getPeg());
         entity.setFcfYield(snapshot.getFcfYield());
         return entity;
+    }
+
+    private StockEntity getStockEntity(Long stockId) {
+        return springDataStockRepository.findById(stockId)
+                .orElseThrow(() -> new RuntimeException("StockEntity not found"));
     }
 }

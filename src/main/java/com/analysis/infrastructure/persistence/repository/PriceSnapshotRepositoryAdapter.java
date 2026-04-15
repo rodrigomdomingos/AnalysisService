@@ -2,6 +2,7 @@ package com.analysis.infrastructure.persistence.repository;
 
 import com.analysis.domain.model.PriceSnapshot;
 import com.analysis.domain.repository.PriceSnapshotRepository;
+import com.analysis.infrastructure.persistence.entity.PriceSnapshotEntity;
 import com.analysis.infrastructure.persistence.mapper.PriceSnapshotMapper;
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +21,10 @@ public class PriceSnapshotRepositoryAdapter implements PriceSnapshotRepository {
 
     @Override
     public PriceSnapshot save(PriceSnapshot snapshot) {
-        return PriceSnapshotMapper.toDomain(delegate.save(PriceSnapshotMapper.toEntity(snapshot, stockRepository.getReferenceById(snapshot.getStockId()))));
+        PriceSnapshotEntity entity = delegate.findByStockIdAndSnapshotAt(snapshot.getStockId(), snapshot.getSnapshotAt())
+                .orElse(new PriceSnapshotEntity());
+        PriceSnapshotMapper.apply(snapshot, stockRepository.getReferenceById(snapshot.getStockId()), entity);
+        return PriceSnapshotMapper.toDomain(delegate.save(entity));
     }
 
     @Override
