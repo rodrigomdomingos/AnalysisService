@@ -5,8 +5,7 @@ import java.time.OffsetDateTime;
 
 public class PriceSnapshot {
     private final Long stockId;
-    private final OffsetDateTime date;
-    private final OffsetDateTime snapshotDate;
+    private final OffsetDateTime snapshotAt;
     private final BigDecimal closePrice;
     private final Long volume;
     private final BigDecimal rsi;
@@ -14,10 +13,9 @@ public class PriceSnapshot {
     private final BigDecimal ma200;
     private final boolean aboveMa200;
 
-    public PriceSnapshot(Long stockId, OffsetDateTime date, OffsetDateTime snapshotDate, BigDecimal closePrice, Long volume, BigDecimal rsi, BigDecimal ma50, BigDecimal ma200) {
+    public PriceSnapshot(Long stockId, OffsetDateTime snapshotAt, BigDecimal closePrice, Long volume, BigDecimal rsi, BigDecimal ma50, BigDecimal ma200) {
         this.stockId = stockId;
-        this.date = date;
-        this.snapshotDate = snapshotDate;
+        this.snapshotAt = snapshotAt;
         this.closePrice = closePrice;
         this.volume = volume;
         this.rsi = rsi;
@@ -30,12 +28,8 @@ public class PriceSnapshot {
         return stockId;
     }
 
-    public OffsetDateTime getDate() {
-        return date;
-    }
-
-    public OffsetDateTime getSnapshotDate() {
-        return snapshotDate;
+    public OffsetDateTime getSnapshotAt() {
+        return snapshotAt;
     }
 
     public BigDecimal getClosePrice() {
@@ -66,8 +60,7 @@ public class PriceSnapshot {
     public String toString() {
         return "PriceSnapshot{" +
                 "stockId=" + stockId +
-                ", date=" + date +
-                ", snapshotDate=" + snapshotDate +
+                ", snapshotAt=" + snapshotAt +
                 ", closePrice=" + closePrice +
                 ", volume=" + volume +
                 ", rsi=" + rsi +

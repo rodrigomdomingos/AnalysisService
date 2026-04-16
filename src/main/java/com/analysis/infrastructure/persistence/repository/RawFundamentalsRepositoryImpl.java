@@ -5,6 +5,7 @@ import com.analysis.domain.repository.RawFundamentalsRepository;
 import com.analysis.infrastructure.persistence.mapper.RawFundamentalsMapper;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,14 @@ public class RawFundamentalsRepositoryImpl implements RawFundamentalsRepository 
     @Override
     public List<RawFundamentals> findByStockIdOrderByReferenceDateDesc(Long stockId) {
         return jpaRepository.findByStockIdOrderByReferenceDateDesc(stockId)
+                .stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RawFundamentals> findLatestByStockIdAndDate(Long stockId, OffsetDateTime snapshotAt) {
+        return jpaRepository.findByStockIdAndReferenceDateLessThanEqualOrderByReferenceDateDesc(stockId, snapshotAt)
                 .stream()
                 .map(mapper::toDomain)
                 .collect(Collectors.toList());

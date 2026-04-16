@@ -3,7 +3,7 @@ package com.analysis.infrastructure.persistence.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -22,7 +22,7 @@ public class RawFundamentalsEntity {
     private StockEntity stock;
 
     @Column(name = "reference_date", nullable = false)
-    private LocalDate referenceDate;
+    private OffsetDateTime referenceDate;
 
     private Double price;
     private Double marketCap;

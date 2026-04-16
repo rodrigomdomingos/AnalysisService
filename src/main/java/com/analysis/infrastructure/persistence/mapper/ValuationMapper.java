@@ -14,11 +14,10 @@ public final class ValuationMapper {
         }
         return new ValuationSnapshot(
                 entity.getStock().getId(),
-                entity.getDate(),
-                entity.getSnapshotDate(),
-                entity.getPe(),
+                entity.getSnapshotAt(),
+                entity.getPeRatio(),
                 entity.getEvEbitda(),
-                entity.getPeg(),
+                entity.getPegRatio(),
                 entity.getFcfYield()
         );
     }
@@ -29,12 +28,12 @@ public final class ValuationMapper {
         }
         return new ValuationSnapshotEntity(
                 stock,
-                snapshot.getDate(),
-                snapshot.getSnapshotDate(),
+                snapshot.getSnapshotAt(),
                 snapshot.getPe(),
                 snapshot.getEvEbitda(),
                 snapshot.getPeg(),
-                snapshot.getFcfYield()
+                snapshot.getFcfYield(),
+                null
         );
     }
 }

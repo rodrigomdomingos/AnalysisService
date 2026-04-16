@@ -2,9 +2,12 @@ package com.analysis.infrastructure.persistence.repository;
 
 import com.analysis.domain.model.PriceSnapshot;
 import com.analysis.domain.repository.PriceSnapshotRepository;
-import com.analysis.infrastructure.persistence.entity.StockEntity;
+import com.analysis.infrastructure.persistence.entity.PriceSnapshotEntity;
 import com.analysis.infrastructure.persistence.mapper.PriceSnapshotMapper;
 import org.springframework.stereotype.Repository;
+
+import java.time.OffsetDateTime;
+import java.util.Optional;
 
 @Repository
 public class PriceSnapshotRepositoryAdapter implements PriceSnapshotRepository {
@@ -18,7 +21,15 @@ public class PriceSnapshotRepositoryAdapter implements PriceSnapshotRepository {
 
     @Override
     public PriceSnapshot save(PriceSnapshot snapshot) {
-        StockEntity stockEntity = stockRepository.getReferenceById(snapshot.getStockId());
-        return PriceSnapshotMapper.toDomain(delegate.save(PriceSnapshotMapper.toEntity(snapshot, stockEntity)));
+        PriceSnapshotEntity entity = delegate.findByStockIdAndSnapshotAt(snapshot.getStockId(), snapshot.getSnapshotAt())
+                .orElse(new PriceSnapshotEntity());
+        PriceSnapshotMapper.apply(snapshot, stockRepository.getReferenceById(snapshot.getStockId()), entity);
+        return PriceSnapshotMapper.toDomain(delegate.save(entity));
+    }
+
+    @Override
+    public Optional<PriceSnapshot> findByStockIdAndSnapshotAt(Long stockId, OffsetDateTime snapshotAt) {
+        return delegate.findByStockIdAndSnapshotAt(stockId, snapshotAt)
+                .map(PriceSnapshotMapper::toDomain);
     }
 }

@@ -18,7 +18,15 @@ public class TechnicalAnalysisService {
         BigDecimal rsi = calculateRSI(prices);
         BigDecimal ma50 = calculateMA(prices, MA_50);
         BigDecimal ma200 = calculateMA(prices, MA_200);
-        return new TechnicalSnapshot(rsi, ma50, ma200);
+        BigDecimal closePrice = calculateClosePrice(prices);
+        return new TechnicalSnapshot(closePrice, rsi, ma50, ma200);
+    }
+
+    private BigDecimal calculateClosePrice(List<Price> prices) {
+        if (prices == null || prices.isEmpty()) {
+            return null;
+        }
+        return prices.get(prices.size() - 1).getClosePrice();
     }
 
     private BigDecimal calculateRSI(List<Price> prices) {
