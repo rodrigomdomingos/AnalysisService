@@ -1,10 +1,10 @@
-# AnalisysService
+# FinancialAnalysis
 
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/postgresql-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 
-`AnalisysService` é um serviço especializado em realizar análises financeiras automatizadas para ativos de ações (stocks). O sistema processa dados históricos de preços, fundamentos financeiros e métricas de valuation para gerar sinais de investimento baseados em indicadores técnicos e fundamentais.
+`FinancialAnalysis` é um serviço especializado em realizar análises financeiras automatizadas para ativos de ações (stocks). O sistema processa dados históricos de preços, fundamentos financeiros e métricas de valuation para gerar sinais de investimento baseados em indicadores técnicos e fundamentais.
 
 ## 🚀 Funcionalidades
 
