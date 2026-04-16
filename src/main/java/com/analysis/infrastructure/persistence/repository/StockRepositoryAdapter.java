@@ -21,7 +21,8 @@ public class StockRepositoryAdapter implements StockRepository {
         return delegate.findByTicker(ticker).map(StockMapper::toDomain);
     }
 
-    public StockEntity getReference(Long stockId) {
-        return delegate.getReferenceById(stockId);
+    @Override
+    public Optional<Stock> findById(Long stockId) {
+        return delegate.findById(stockId).map(StockMapper::toDomain);
     }
 }

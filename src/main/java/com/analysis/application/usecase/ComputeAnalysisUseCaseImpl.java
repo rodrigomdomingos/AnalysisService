@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -86,9 +87,19 @@ public class ComputeAnalysisUseCaseImpl implements ComputeAnalysisUseCase {
     @Override
     public AnalysisResponse runAnalysisForStock(String ticker) {
         log.info("Starting analysis for ticker {}", ticker);
-        
-        Stock stock = findStock(ticker);
-        final AnalysisContext context = new AnalysisContext(stock.getId(), timeService.getStartOfDay());
+        Stock stock = findStockByTicker(ticker);
+        return analyzeForStock(stock, timeService.getStartOfDay());
+    }
+
+    @Override
+    public void execute(Long stockId, OffsetDateTime snapshotAt) {
+        log.info("Starting analysis for stock id {} and snapshotAt {}", stockId, snapshotAt);
+        Stock stock = findStockById(stockId);
+        analyzeForStock(stock, snapshotAt);
+    }
+
+    private AnalysisResponse analyzeForStock(Stock stock, OffsetDateTime snapshotAt) {
+        final AnalysisContext context = new AnalysisContext(stock.getId(), snapshotAt);
 
         List<Price> prices = loadPrices(context.getStockId());
         TechnicalSnapshot technicalSnapshot = computeTechnical(prices);
@@ -111,7 +122,7 @@ public class ComputeAnalysisUseCaseImpl implements ComputeAnalysisUseCase {
 
         AnalysisSnapshot analysisSnapshot = buildAnalysisSnapshot(context, technicalSnapshot, fundamentalsSnapshot, valuationSnapshot);
 
-        log.info("Completed analysis for {} on {}", ticker, context.getSnapshotAt());
+        log.info("Completed analysis for {} on {}", stock.getTicker(), context.getSnapshotAt());
         return toResponse(stock, analysisSnapshot);
     }
     
@@ -134,10 +145,17 @@ public class ComputeAnalysisUseCaseImpl implements ComputeAnalysisUseCase {
         return entity;
     }
 
-    private Stock findStock(String ticker) {
+    private Stock findStockByTicker(String ticker) {
         Stock stock = stockRepository.findByTicker(ticker)
                 .orElseThrow(() -> new StockNotFoundException(ticker));
         log.info("Found stock {} with id {}", stock.getTicker(), stock.getId());
+        return stock;
+    }
+
+    private Stock findStockById(Long stockId) {
+        Stock stock = stockRepository.findById(stockId)
+                .orElseThrow(() -> new StockNotFoundException(stockId));
+        log.info("Found stock {} for id {}", stock.getTicker(), stock.getId());
         return stock;
     }
 
